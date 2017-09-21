@@ -1,0 +1,20 @@
+{
+    "name": "mathieuimbert/codeception-propel",
+    "type": "library",
+    "license": "Apache License 2.0",
+    "authors": [
+        {
+            "name": "Mathieu Imbert",
+            "email": "mathieu.imbert@gmail.com"
+        }
+    ],
+    "require": {
+        "codeception/codeception": "^2.3",
+        "propel/propel": "~2.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "MathieuImbert\\": "src/MathieuImbert"
+        }
+    }
+}
