@@ -3,6 +3,7 @@ namespace MathieuImbert\Codeception\Module;
 
 use Codeception\Module;
 use Codeception\TestInterface;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 
@@ -19,7 +20,7 @@ class Propel extends Module
 
     public function _beforeSuite($settings = [])
     {
-        $this->connection = \Propel\Runtime\Propel::getConnection($settings['']);
+        $this->connection = \Propel\Runtime\Propel::getConnection($this->config['connection']);
     }
 
     public function _before(TestInterface $test)
@@ -37,13 +38,56 @@ class Propel extends Module
     }
 
     /**
-     * @param string $model
+     * @param string $entity
      * @param array $data
      */
-    public function haveInDatabase($model, array $data)
+    public function haveRecord($entity, array $data)
     {
-        $map = \Propel\Runtime\Propel::getDatabaseMap();
-        var_dump($map);
-        exit;
+        // TODO
+    }
+
+    /**
+     * @param string $entity
+     * @param array $data
+     */
+    public function seeRecord($entity, array $data)
+    {
+        $record = $this->grabRecord($entity, $data);
+        $this->assertNotNull($record);
+    }
+
+    /**
+     * @param string $entity
+     * @param array $data
+     */
+    public function dontSeeRecord($entity, array $data)
+    {
+        $record = $this->grabRecord($entity, $data);
+        $this->assertNull($record);
+    }
+
+    /**
+     * @param $entity
+     * @param array $data
+     *
+     * @return object|null
+     */
+    public function grabRecord($entity, array $data)
+    {
+        // Table map class
+        $tableMap = $entity::TABLE_MAP;
+        $tableName = $tableMap::TABLE_NAME;
+
+        // Query class name
+        $queryClass = $entity . 'Query';
+
+        // Create a query object
+        $query = $queryClass::create();
+
+        foreach ($data as $key => $value) {
+            $query->where("$tableName.$key" . ' = ?', $value);
+        }
+
+        return $query->findOne();
     }
 }
